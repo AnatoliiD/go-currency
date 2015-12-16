@@ -9,7 +9,7 @@ import (
 )
 
 type Currencies struct {
-	currencies_list map[string]float64
+	currenciesList map[string]float64
 }
 
 func New() (currencies *Currencies) {
@@ -18,35 +18,35 @@ func New() (currencies *Currencies) {
 
 func Load(currs ...interface{}) (currencies *Currencies, err error) {
 	currencies = new(Currencies)
-	currencies.currencies_list = map[string]float64{}
+	currencies.currenciesList = map[string]float64{}
 	cs := []string{}
 
 	for _, c := range currs {
 		cs = append(cs, c.(string))
 	}
-	m, err := retreive_currencies(cs)
+	m, err := retreiveCurrencies(cs)
 	if err != nil {
 		return
 	}
-	currencies.currencies_list = m
+	currencies.currenciesList = m
 	return
 }
 
 func (c *Currencies) Get(currency string) (rate float64, err error) {
 
-	rate, ok := c.currencies_list[currency]
+	rate, ok := c.currenciesList[currency]
 	if !ok {
 		var cmap map[string]float64
-		cmap, err = retreive_currencies([]string{currency})
+		cmap, err = retreiveCurrencies([]string{currency})
 		rate = cmap[currency]
-		c.currencies_list[currency] = rate
+		c.currenciesList[currency] = rate
 	}
 	return rate, err
 }
 
-func retreive_currencies(curr_list []string) (ratemap map[string]float64, err error) {
+func retreiveCurrencies(currList []string) (ratemap map[string]float64, err error) {
 	ratemap = map[string]float64{}
-	response, err := http.Get("http://download.finance.yahoo.com/d/quotes.csv?s=" + strings.Join(curr_list, "=X,") + "=X&f=c4l1&e=.csv")
+	response, err := http.Get("http://download.finance.yahoo.com/d/quotes.csv?s=" + strings.Join(currList, "=X,") + "=X&f=c4l1&e=.csv")
 	if nil != err {
 		return
 	}
